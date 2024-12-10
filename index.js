@@ -111,6 +111,9 @@ app.get('/register', (req, res) => {
       <ul>
         ${users.map(user => `<li>${user.name} (${user.nickname})</li>`).join('')}
       </ul>
+
+      <!-- Botão para voltar ao Menu -->
+      <a href="/menu"><button>Voltar ao Menu</button></a>
     </body>
     </html>
   `);
@@ -153,6 +156,9 @@ app.get('/chat', (req, res) => {
       <ul>
         ${messages.map(msg => `<li><strong>${msg.user}</strong>: ${msg.message} <em>${msg.timestamp}</em></li>`).join('')}
       </ul>
+
+      <!-- Botão para voltar ao Menu -->
+      <a href="/menu"><button>Voltar ao Menu</button></a>
     </body>
     </html>
   `);
