@@ -1,30 +1,60 @@
 const express = require('express');
 const session = require('express-session');
+const path = require('path');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
-        secret: 'chave-secreta',
+        secret: process.env.SESSION_SECRET || 'chave-secreta', // Utilize variável de ambiente para maior segurança
         resave: false,
         saveUninitialized: true,
+        cookie: { maxAge: 3600000 }, // Expira em 1 hora
     })
 );
 
-const porta = 3001;
+// Definir pasta pública
+app.use(express.static(path.join(__dirname, 'public')));
+
+const porta = 4000;
 const host = '0.0.0.0';
 
 // Função para verificar autenticação
 function verificarAutenticacao(req, resp, next) {
     if (req.session.autenticado) {
-        next();
+        next(); // Usuário autenticado, prosseguir
     } else {
-        resp.redirect('/login');
+        resp.redirect('/login.html'); // Redireciona para a página de login se não estiver autenticado
     }
 }
 
-// Rota de login
-app.get('/login', (req, resp) => {
+// Middleware global de tratamento de erros
+app.use((err, req, resp, next) => {
+    console.error(err.stack);
+    resp.status(500).send('Algo deu errado!');
+});
+
+// Rota para processar login
+app.post('/login', (req, resp) => {
+    const { usuario, senha } = req.body;
+    // A senha e o usuário devem ser tratados de forma segura
+    if (usuario === 'admin' && senha === '123') {
+        req.session.autenticado = true; // Marca o usuário como autenticado na sessão
+        resp.redirect('/'); // Redireciona para a página inicial (menu)
+    } else {
+        resp.send('Usuário ou senha inválidos. <a href="/login.html">Tente novamente</a>');
+    }
+});
+
+// Rota de logout
+app.get('/logout', (req, resp) => {
+    req.session.destroy(() => {
+        resp.redirect('/login.html'); // Redireciona para o login após logout
+    });
+});
+
+// Página de login
+app.get('/login.html', (req, resp) => {
     resp.send(`
         <html>
         <head>
@@ -32,32 +62,18 @@ app.get('/login', (req, resp) => {
         </head>
         <body>
             <h1>Login</h1>
-            <form action='/login' method='POST'>
+            <form action="/login" method="POST">
                 <label for="usuario">Usuário:</label>
                 <input type="text" id="usuario" name="usuario" required><br>
+
                 <label for="senha">Senha:</label>
                 <input type="password" id="senha" name="senha" required><br>
-                <button type="submit">Login</button>
+
+                <button type="submit">Entrar</button>
             </form>
         </body>
         </html>
     `);
-});
-
-app.post('/login', (req, resp) => {
-    const { usuario, senha } = req.body;
-    if (usuario === 'admin' && senha === '123') {
-        req.session.autenticado = true;
-        resp.redirect('/');
-    } else {
-        resp.send('Usuário ou senha inválidos. <a href="/login">Tente novamente</a>');
-    }
-});
-
-app.get('/logout', (req, resp) => {
-    req.session.destroy(() => {
-        resp.redirect('/login');
-    });
 });
 
 // Página inicial com menu
@@ -121,7 +137,6 @@ app.post('/formulario', verificarAutenticacao, (req, resp) => {
     `);
 });
 
-// Iniciar o servidor
 app.listen(porta, host, () => {
     console.log(`Servidor rodando em http://${host}:${porta}`);
 });
