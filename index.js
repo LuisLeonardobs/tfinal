@@ -76,9 +76,10 @@ app.get('/menu', (req, res) => {
     <body>
       <h2>Bem-vindo ao sistema, ${req.session.user.name}</h2>
       <p>Último acesso: ${req.cookies.last_access || 'Nenhum acesso registrado'}</p>
-      <a href="/register">Cadastro de Usuários</a> | 
-      <a href="/chat">Bate-papo</a> | 
-      <a href="/logout">Sair</a>
+      
+      <button onclick="window.location.href='/register'">Cadastro de Usuários</button>
+      <button onclick="window.location.href='/chat'">Bate-papo</button>
+      <button onclick="window.location.href='/logout'">Sair</button>
     </body>
     </html>
   `);
@@ -113,7 +114,7 @@ app.get('/register', (req, res) => {
       </ul>
 
       <!-- Botão para voltar ao Menu -->
-      <a href="/menu"><button>Voltar ao Menu</button></a>
+      <button onclick="window.location.href='/menu'">Voltar ao Menu</button>
     </body>
     </html>
   `);
@@ -143,7 +144,7 @@ app.get('/chat', (req, res) => {
       <form action="/sendMessage" method="POST">
         <label for="user">Usuário</label>
         <select name="user" required>
-          ${users.map(user => `<option value="${user.nickname}">${user.name}</option>`).join('')}
+          ${users.map(user => `<option value="${user.nickname}">${user.nickname}</option>`).join('')}
         </select>
 
         <label for="message">Mensagem</label>
@@ -158,7 +159,7 @@ app.get('/chat', (req, res) => {
       </ul>
 
       <!-- Botão para voltar ao Menu -->
-      <a href="/menu"><button>Voltar ao Menu</button></a>
+      <button onclick="window.location.href='/menu'">Voltar ao Menu</button>
     </body>
     </html>
   `);
