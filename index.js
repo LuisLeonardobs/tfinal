@@ -11,7 +11,7 @@ app.use(
     })
 );
 
-const porta = 3000;
+const porta = 3001;
 const host = '0.0.0.0';
 
 // Função para verificar autenticação
