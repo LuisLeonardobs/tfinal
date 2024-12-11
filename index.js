@@ -1,33 +1,33 @@
-// Importação de módulos necessários
+
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-// Instanciação do aplicativo
+
 const app = express();
 
-// Banco de dados simulado
+
 const users = [];
 const messages = [];
 
-// Configuração de middleware
+
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
-// Configuração de sessões
+
 app.use(
     session({
         secret: 'secret_key',
         resave: false,
         saveUninitialized: true,
-        cookie: { maxAge: 1800000 }, // 30 minutos
+        cookie: { maxAge: 1800000 }, 
     })
 );
 
-// Estilo comum para todas as páginas
+
 const commonStyles = `
     <style>
         body {
@@ -70,12 +70,12 @@ const commonStyles = `
     </style>
 `;
 
-// Rota raiz
+
 app.get('/', (req, res) => {
-    res.redirect('/login'); // Redireciona para a página de login
+    res.redirect('/login'); 
 });
 
-// Rotas de Login
+
 app.get('/login', (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -112,7 +112,7 @@ app.post('/login', (req, res) => {
     res.status(401).send('Credenciais inválidas');
 });
 
-// Rotas de Menu
+
 app.get('/menu', (req, res) => {
     if (!req.session.user) return res.redirect('/login');
 
@@ -138,7 +138,7 @@ app.get('/menu', (req, res) => {
     `);
 });
 
-// Rotas de Cadastro
+
 app.get('/register', (req, res) => {
     if (!req.session.user) return res.redirect('/login');
 
@@ -181,7 +181,7 @@ app.post('/register', (req, res) => {
     res.redirect('/register');
 });
 
-// Rotas de Bate-papo
+
 app.get('/chat', (req, res) => {
     if (!req.session.user) return res.redirect('/login');
 
@@ -225,7 +225,7 @@ app.post('/sendMessage', (req, res) => {
     res.redirect('/chat');
 });
 
-// Rota de Logout
+
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) return res.status(500).send('Erro ao fazer logout');
@@ -234,7 +234,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Inicialização do servidor
+
 const PORT = 5001;
 app.listen(PORT, () => {
     console.log(`Servidor iniciado em http://localhost:${PORT}`);
